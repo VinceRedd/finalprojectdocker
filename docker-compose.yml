@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  flasksoftuidashboard:
+    restart: always
+    env_file: './flask-soft-ui-dashboard/.env'
+    build: './flask-soft-ui-dashboard'
+    deploy:
+      replicas: 5
+    networks:
+      - db_network
+      - web_network
+
+  flaskmaterialdashboard:
+    container_name: flaskmaterialdashboard
+    restart: always
+    env_file: './flask-material-dashboard/.env'
+    build: './flask-material-dashboard'
+    networks:
+      - db_network
+      - web_network
+
+  flaskadminator:
+    container_name: flaskadminator
+    restart: always
+    env_file: './flask-adminator/.env'
+    build: './flask-adminator'
+    networks:
+      - db_network
+      - web_network
+
+  flasklightbootstrap:
+    container_name: flasklightbootstrap
+    restart: always
+    env_file: './flask-light-bootstrap/.env'
+    build: './flask-light-bootstrap'
+    networks:
+      - db_network
+      - web_network
+
+
+  flaskvoltdashboard:
+    container_name: flaskvoltdashboard
+    restart: always
+    env_file: './flask-volt-dashboard/.env'
+    build: './flask-volt-dashboard'
+    ports:
+      - 80:5009
+
+
+
+  nginx:
+    container_name: nginx
+    restart: always
+    image: "nginx:1.22.1-alpine-slim"
+    ports:
+      - "5090:5090"
+      - "5091:5091"
+      - "5092:5092"
+      - "5093:5093"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    networks:
+      - web_network
+    depends_on: 
+      - flaskmaterialdashboard
+      - flaskadminator
+      - flasklightbootstrap
+      - flaskvoltdashboard
+networks:
+  db_network:
+    driver: bridge
+  web_network:
+    driver: bridge
